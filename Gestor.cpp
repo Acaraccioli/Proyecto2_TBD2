@@ -2,7 +2,7 @@
 
 Gestor::Gestor(char * nom, int tam, int n)
 {
-    bitmap= new bool[((tam*1024*1024)/4096)];
+    bitmap= new int[((tam*1024*1024)/4096)];
     cout<<(((tam*1024*1024)/4096));
     this->nombre= nom;
     this->tamano=tam;
@@ -19,14 +19,14 @@ Gestor::Gestor(char * nom, int tam, int n)
     {
         //IniciarBD();
         IniciarBit();
-        CargarBits();
+       // CargarBits();
         IniciarBloques();
         //CargarBloques();
     }
     else if(n==0){
          IniciarBD();
         //CargarBloques();
-        CargarBits();
+       // CargarBits();
         CargarTablas();
     }
     else if(n==-1){
@@ -39,11 +39,13 @@ Gestor::Gestor(char * nom, int tam, int n)
 void Gestor::IniciarBD()
 {
     this->tempb->Cargar();
+    //cout <<"CANT  TABLAS INI BD: " <<tempb->CantidadTablas << endl;
 
 }
 
 void Gestor::CargarTablas()
 {       
+    //exit(0);
         list<Tabla*> Tablas2;
         list<int> Types2;
         list<char*> Nombres2;
@@ -62,11 +64,15 @@ void Gestor::CargarTablas()
             c++;
         }  */
         int pos=16;
+        Tabla *tab;
+        cout <<"CANT TABLAS: " <<tempb->CantidadTablas << endl;
+        //exit(0);
         for(int x=0;x<tempb->CantidadTablas;x++)
         {
-        Tabla *tab=new Tabla(0,0,"","",0,0,ar);
+        tab =new Tabla(0,0,"","",0,0,ar);
         tab->Initfromchar(ar->Read(pos,60));
         pos+=60;
+        
         tab->InitColumnas(ar->Read(pos,(tab->cantcol*4)+tab->cantcol*20));
         pos+=((tab->cantcol*4)+tab->cantcol*20);
         Tablas.push_back(tab);
@@ -160,6 +166,7 @@ void Gestor::ImprimirTablas()
 }
 int Gestor::BuscarBit()
 {
+    cout << "CANT BLOQUES BUSCAR BIT: " << tempb->CantidadBloques << endl;
     for (int i = 0; i < tempb->CantidadBloques; i++)
   {
       if (bitmap[i]==0)
@@ -185,6 +192,7 @@ Tabla* Gestor::BuscarTabla(char * nom)
 void Gestor::CargarBloques()
 {
     int p=4097;
+    cout << "CANT BLOQUES CARGAR BLOQUES: "<<tempb->CantidadBloques<<endl;
       for (int i = 0; i < tempb->CantidadBloques; i++)
   {
 
@@ -208,47 +216,62 @@ void Gestor::IniciarBloques()
 }
 void Gestor::CargarBits()
 {
-    int pos=0;
+   // cout << "CANT BLOQUES CARGAR BITS: "<<tempb->CantidadBloques<<endl;
+   // printBitmap();
+    char * da=(char*)malloc(tempb->CantidadBloques*4);
 
-     char * da=new  char[tempb->CantidadBloques];
     da = ar->Read(4096*2,tempb->cantbloquesparabitmap*4096);
-    for(int i=0;i<tempb->CantidadBloques;i++)
-    {bool x;
-     memcpy(&x,&(da[i]),1);
-     bitmap[i]=x;
+    int m = 10;
+    for(int a = 0; a < 100; a++){
+      //  cout << "da[a]: "<<(int)da[a];
+        if(a == m){
+            m+=10;
+        } 
+    }
+    int pos = 0;
+    for(int i=0;i<tempb->CantidadBloques;i++){
+        int x;
+        memcpy(&bitmap[i],&(da[pos]),4);
+        pos+=4;
+        //bitmap[i]=x;
     }
     /*for(int i=0;i<tempb->CantidadBloques;i++)
     {
         cout<<"B:"<<bitmap[i];
     }*/
 
+    //printBitmap();
 }
-/*evelyn menjivar
-3170 0075
-tabacalera hondurena 
-fundidora norte
-erick 
-31700092*/
+
 
 void Gestor::IniciarBit()
 {
-    char * da=new char[tempb->CantidadBloques];
+    //printf("CANT BLOQUES: %d\n", tempb->CantidadBloques);
+    //char * da = new char[tempb->CantidadBloques*4];
+    char * da = (char*)malloc(tempb->CantidadBloques*sizeof(int));
+    //memset(da,0,tempb->CantidadBloques*4);
     bitmap[0]=1;
-    memcpy(&(da[0]),&(bitmap[0]),1);
+    //printf("da[0] bf: %c ", da[0]);
+    int pos=0;
+    memcpy(&da[pos],&bitmap[0],sizeof(int));
+    pos+=4;
     bitmap[1]=1;
-    memcpy(&(da[1]),&(bitmap[1]),1);
-    
+    memcpy(&(da[pos]),&(bitmap[1]),sizeof(int));
+//printBitmap();
+    //cout << "da[0]: " << (int)da[0] << " da[1]: " << (int)da[4] <<endl;
     for (int i = 0; i < tempb->cantbloquesparabitmap; i++)
     {
      bitmap[i+2]=1;
-     memcpy(&(da[i+2]),&(bitmap[i+2]),1);
-
+     memcpy(&(da[i*4+8]),&(bitmap[i+2]),4);
+   // cout << "da[i*4+8]: " << (int)da[i*4+8] <<endl;
     }
+    //exit(0);
 
-  for (int i = tempb->cantbloquesparabitmap+1; i < tempb->CantidadBloques; i++)
+  for (int i = tempb->cantbloquesparabitmap+2; i < tempb->CantidadBloques; i++)
   {
         this->bitmap[i]=0;
-        memcpy(&(da[i]),&(bitmap[i]),1);
+        memcpy(&(da[i*4]),&(bitmap[i]),4);
+        //cout << "da[i*4]: " << (int)da[i*4] <<endl;
   }
 
     ar->Write(4096,da,tempb->CantidadBloques);
@@ -259,7 +282,8 @@ void Gestor::IniciarBit()
 void Gestor::CrearTabla(int cant, char * nom, char * k)
 {   cout<<"creando tabla"<<endl;
     int x=BuscarBit();
-    temp= new Tabla(tempb->posenindice,cant,nom,k,x,x,ar);
+  //  cout << "BIT RETORNADO AL CREAR: "<< x <<endl;
+    temp= new Tabla(tempb->posenindice,cant,nom,k,x,0,ar);
     this->bitmap[x]=1;
     GuardarBits();
 
@@ -270,11 +294,12 @@ void Gestor::CrearTabla(int cant, char * nom, char * k)
 }
 void Gestor::GuardarBits()
 {
+   // cout << "CANT BLOQUES GUARDAR BITS: "<<tempb->CantidadBloques<<endl;
         char * da=new char[tempb->CantidadBloques];
 
   for (int i = 0; i < tempb->CantidadBloques; i++)
   {
-        memcpy(&(da[i]),&(bitmap[i]),1);
+        memcpy(&(da[i]),&(bitmap[i]),4);
   }
 
 
@@ -307,10 +332,11 @@ void Gestor::BorrarTabla(char* nom)
 void Gestor::AgregarDatos(char* nom, char* col)
 {
     Tabla * t=BuscarTabla(nom);
+       // cout << "CANTBLOQUES AGREGAR DATOS: "<< tempb->CantidadBloques<<endl;
         int integer;
         double doble;
         char buffer[300];
-        int posenbuffer=t->termina;
+        int posenbuffer=0; //t->termina;
         int tam=0;
      for(int i=0; i<t->cantcol;i++){
         cout<<"Ingrese valor para la columna: ";
@@ -334,7 +360,7 @@ void Gestor::AgregarDatos(char* nom, char* col)
         {
               cout<<"Tipo: Integer\n";
               cin>>integer;
-              memcpy(&(buffer[posenbuffer]),(&doble),8);
+              memcpy(&(buffer[posenbuffer]),(&integer),4);
                posenbuffer+=4;
               tam+=4;
         }
@@ -354,7 +380,7 @@ void Gestor::AgregarDatos(char* nom, char* col)
 
          ar->Write((t->empieza*4096)+t->termina,buffer,tam);
          t->termina+=tam;
-         t->GuardarMetadata();
+         //t->GuardarMetadata();
          
 
 
@@ -378,48 +404,56 @@ void Gestor::ImprimirDatos(char * nom)
       
         datos = ar->Read((t->empieza*4096),4096);
         int pos=0;
-        while(pos<1000)
-        {
+    //if(t->posactual!=0)
+    //{    
+     while(pos<500)
+       {
         for(int x=0;x<t->cantcol;x++)
         {
-           cout<<"Valor de columna: ";
+           cout<<"Valor de columna ";
             
-            for(int y=x*20;x<(x*20)+20;y++)
+            for(int y=x*20;y<(x*20)+20;y++)
             {
                 cout<<t->nombresarreglo[y];
             }
-            cout<<"   ";
-
+            cout<<": ";
+            
 
             if(t->tipos[x]==-2)
             {
                 double a=0;
                 memcpy(&a,&(datos[pos]),8);
-                cout<<a;
+                cout<<a<<" ";
+                cout<<endl;
                 pos+=8;
 
             }
 
             else if(t->tipos[x]==-1)
               {
-                  int b=0;
-                memcpy(&b,&(datos[pos]),4);
-                  cout<<b;
-
+                int b=0;
+                memcpy(&b,&(datos[pos]),sizeof(int));
+                cout<<b<<" ";
+                cout<<endl;
                 pos+=4;
               }
             else
 
             {
-                char  c[t->tipos[x]];
+                char c[t->tipos[x]];
+                c[t->tipos[x]] = '\0';
                 memcpy(c,&(datos[pos]),t->tipos[x]);
-                cout<<c;
+                cout<<c<<" ";
+                cout<<endl;
                 pos+=t->tipos[x];
             }
         
         }
         
         }
+    //}
+    //t->posactual=pos;
+    //t->GuardarMetadata();
 
 
 }
@@ -470,4 +504,15 @@ void Gestor::Seleccion(char* nom, char* cols, char* cond, char* val)
 Gestor::~Gestor()
 {
     //dtor
+}
+
+void Gestor::printBitmap(){
+    int b = 16;
+    for(int a = 0; a < tempb->CantidadBloques; a++){
+        cout << bitmap[a];
+        if(a == b){
+            cout << endl;
+            b+=16;
+        }
+    }
 }

@@ -19,7 +19,7 @@ Archivo::Archivo(char * nombre, bool nuevo)
     //unsigned char data[longitud];
     fseek(file, pos, SEEK_SET);
     fread(data, sizeof(char), longitud, file);
-  std::cout<<"meow";
+  //std::cout<<"meow";
     Close();
   // char *data2 = &data[0];
     //printf("s: %s\n", data);
@@ -41,6 +41,9 @@ char * Archivo::Read(int pos, int longitud){
 } */
 
 void Archivo::Write(int pos, char * data, int longitud){
+    //for(int a = 0; a < 100; a++){
+      //  std::cout << "DATA WRITE data[a]: " << data[a] << std::endl;
+    //}
     Open();
     fseek(file, pos, SEEK_SET);
     fwrite(data, sizeof(char), longitud, file);

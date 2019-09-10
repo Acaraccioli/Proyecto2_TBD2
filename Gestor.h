@@ -25,7 +25,7 @@ class Gestor
         list<Tabla*> Tablas;
         list<int> Types;
         list<char*> Nombres;
-        bool * bitmap;
+        int * bitmap;
         void CargarTablas();
         void IniciarBit();
         int BuscarBit();
@@ -48,6 +48,7 @@ class Gestor
         void Seleccion(char * nom, char * cols, char * cond, char * val);
         void GuardarTabla();
         void AgregarColumna(int t, char * x);
+        void printBitmap();
         virtual ~Gestor();
 
     protected:

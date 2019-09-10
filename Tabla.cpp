@@ -97,9 +97,9 @@ void Tabla::GuardarMetadata()
     cout<<"guardando tabla:"<<po<<endl;
     char *datos=ToChar();
     this->arch->Write(po,datos,60);
-    po+=60;
+   /* po+=60;
     char * tipostemp= new char[cantcol*4]; //tipos cols 
-    char * nomtemp= new char[cantcol*20]; 
+    char * nomtemp= new char[cantcol*20]; */
 }
 void Tabla::Initfromchar(char * datos)
 {

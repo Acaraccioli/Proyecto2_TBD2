@@ -50,6 +50,7 @@ void BD::Cargar()
 {
    
     Initfromchar(this->arch->Read(0,16));
+    
 }
 void BD::Guardar()
 {

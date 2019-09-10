@@ -13,7 +13,7 @@ int main()
     int opcion=0;
     while(opcion!=10)
     {
-    cout << "1. Crear Base de Datos\n2. Crear Tabla\n3. Imprimir datos de la tabla\n4. Borrar Tabla\n5.Imprimir Tablas\n6.Agregar Datos \n7. Drop Databse\n8. Cargar Database\n9. Guardar Tabla Actual \n10. Salir"<<endl;
+    cout << "1. Crear Base de Datos\n2. Crear Tabla\n3. Imprimir datos de la tabla\n4. Borrar Tabla\n5. Imprimir Tablas\n6. Agregar Datos \n7. Drop Databse\n8. Cargar Database\n9. Guardar Tabla Actual \n10. Salir"<<endl;
     cin >> opcion;
     char *nom=new char[20];
     
@@ -55,7 +55,7 @@ int main()
 
         break;
     case 3:
-     cout<<"Ingresar Nombre de Tabla a Ver los dats"<<endl;
+     cout<<"Ingresar Nombre de Tabla a Ver los datos"<<endl;
         cin >> nom;
         g->ImprimirDatos(nom);
         break;
@@ -92,9 +92,11 @@ int main()
         break;
     case 10:
 //        dv->ar->Close();
-
         cout<<"Cerrando Programa"<<endl;
         break;
+     case 11:
+        g->printBitmap();
+    break;
     }
     }
 
